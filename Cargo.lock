@@ -68,15 +68,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "api-call"
-version = "0.1.0"
-dependencies = [
- "clap",
- "reqwest",
- "tokio",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -866,6 +857,15 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "winreg",
+]
+
+[[package]]
+name = "rust"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "reqwest",
+ "tokio",
 ]
 
 [[package]]
