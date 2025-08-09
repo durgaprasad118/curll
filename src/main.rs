@@ -1,30 +1,38 @@
+mod get;
 use clap::Parser;
+use get::get_req;
+use std::collections::HashMap;
+
 #[derive(Parser, Debug)]
 struct Args {
     #[arg(short, long)]
     url: Option<String>,
+    
+    #[arg(short = 'H', long, value_delimiter = '=', num_args = 0..)]
+    header: Vec<String>,
 }
+
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
-    let mut url = String::new();
-    match args.url {
-        Some(x) => {
-            url = x;
+    
+    let url = match args.url {
+        Some(x) => x,
+        None => {
+            println!("Please pass a valid url");
+            return;
         }
-        None => println!("Please pass a valid url"),
-    }
-    match reqwest::get(&url).await {
-        Ok(response) => {
-            if response.status().is_success() {
-                match response.text().await {
-                    Ok(body) => println!("Response Body:\n{}", body),
-                    Err(e) => eprintln!("Error reading response body: {}", e),
-                }
-            } else {
-                eprintln!("Error: Received non-success status: {}", response.status());
-            }
+    };
+    
+    // Parse headers into HashMap
+    let mut headers = HashMap::new();
+    for header in args.header {
+        if let Some(separator_index) = header.find(':') {
+            let key = header[..separator_index].trim().to_string();
+            let value = header[separator_index + 1..].trim().to_string();
+            headers.insert(key, value);
         }
-        Err(e) => eprintln!("Error making request: {}", e),
     }
+    
+    get_req(&url, &headers).await;
 }
